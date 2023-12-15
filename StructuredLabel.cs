@@ -62,12 +62,8 @@ namespace CorpseLib.Wpf
                         img = System.Drawing.Image.FromFile(section.Content);
                     else
                     {
-                        //TODO Switch to URLRequest
-                        WebClient wc = new();
-                        byte[] bytes = wc.DownloadData(section.Content);
-                        MemoryStream stream = new(bytes);
-                        //Response response = new URLRequest(URI.Parse(section.Content)).Send();
-                        //MemoryStream stream = new(response.RawBody);
+                        Response response = new URLRequest(URI.Parse(section.Content)).Send();
+                        MemoryStream stream = new(response.RawBody);
                         img = System.Drawing.Image.FromStream(stream);
                     }
                     AnimatedImage animatedImage = new((System.Drawing.Bitmap)img)
