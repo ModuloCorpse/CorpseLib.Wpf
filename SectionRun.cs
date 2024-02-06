@@ -1,4 +1,5 @@
 ﻿using CorpseLib.StructuredText;
+using System.Windows.Media;
 
 namespace CorpseLib.Wpf
 {
@@ -8,11 +9,16 @@ namespace CorpseLib.Wpf
 
         public SectionRun(Section section)
         {
-            Text = section.Content;
+            Text = (section.SectionType == Section.Type.TEXT) ? section.Content : section.Alt;
             m_Style = section.Properties;
 
             if (m_Style.TryGetValue("FontSize", out object? fontSize))
                 FontSize = (double)fontSize!;
+
+            if (m_Style.TryGetValue("Color", out object? foreground))
+                Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom((string)foreground!)!;
+            if (m_Style.TryGetValue("BackgroundColor", out object? background))
+                Background = (SolidColorBrush)new BrushConverter().ConvertFrom((string)background!)!;
         }
 
         public void SetFontSize(double fontSize)

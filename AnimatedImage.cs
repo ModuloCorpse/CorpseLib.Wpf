@@ -10,10 +10,15 @@ namespace CorpseLib.Wpf
         private readonly BitmapSource[] m_BitmapSources = [];
         private int m_CurrentFrame = 0;
 
+        public AnimatedImage(Image animatedBitmap, BitmapSource[] bitmapSources)
+        {
+            m_BitmapSources = bitmapSources;
+            ImageAnimator.Animate(animatedBitmap, OnFrameChanged);
+        }
+
         public AnimatedImage(Bitmap animatedBitmap)
         {
             int timeFrames = animatedBitmap.GetFrameCount(System.Drawing.Imaging.FrameDimension.Time);
-            m_CurrentFrame = 0;
             if (timeFrames > 0)
             {
                 m_BitmapSources = new BitmapSource[timeFrames];
