@@ -40,14 +40,7 @@ namespace CorpseLib.Wpf
         private Image? LoadStaticImage(string url)
         {
             if (ms_LoadedStaticImage.TryGetValue(url, out BitmapSource? source))
-            {
-                return new Image()
-                {
-                    Width = m_FontSize * 1.5,
-                    Height = m_FontSize * 1.5,
-                    Source = source
-                };
-            }
+                return new Image() { Source = source };
             else
             {
                 System.Drawing.Image? img = LoadImage(url);
@@ -55,12 +48,7 @@ namespace CorpseLib.Wpf
                 {
                     BitmapSource newSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(((Bitmap)img).GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                     ms_LoadedStaticImage[url] = newSource;
-                    return new Image()
-                    {
-                        Width = m_FontSize * 1.5,
-                        Height = m_FontSize * 1.5,
-                        Source = newSource
-                    };
+                    return new Image() { Source = newSource };
                 }
             }
             return null;
@@ -69,13 +57,7 @@ namespace CorpseLib.Wpf
         private AnimatedImage? LoadAnimatedImage(string url)
         {
             if (ms_LoadedAnimatedImage.TryGetValue(url, out Tuple<System.Drawing.Image, BitmapSource[]>? source))
-            {
-                return new AnimatedImage(source.Item1, source.Item2)
-                {
-                    Width = m_FontSize * 1.5,
-                    Height = m_FontSize * 1.5,
-                };
-            }
+                return new AnimatedImage(source.Item1, source.Item2);
             else
             {
                 System.Drawing.Image? img = LoadImage(url);
@@ -95,11 +77,7 @@ namespace CorpseLib.Wpf
                         }
                         Tuple<System.Drawing.Image, BitmapSource[]> newSource = new(img, bitmapSources);
                         ms_LoadedAnimatedImage[url] = newSource;
-                        return new AnimatedImage(newSource.Item1, newSource.Item2)
-                        {
-                            Width = m_FontSize * 1.5,
-                            Height = m_FontSize * 1.5,
-                        };
+                        return new AnimatedImage(newSource.Item1, newSource.Item2);
                     }
                 }
             }
@@ -133,6 +111,14 @@ namespace CorpseLib.Wpf
 
                     if (image != null)
                     {
+                        double ratioToFontSize = section.GetPropertiesOr("Ratio", 1.5);
+                        double marginLeft = section.GetPropertiesOr("Margin-Left", 0.0);
+                        double marginTop = section.GetPropertiesOr("Margin-Top", 0.0);
+                        double marginRight = section.GetPropertiesOr("Margin-Right", 0.0);
+                        double marginBottom = section.GetPropertiesOr("Margin-Bottom", 0.0);
+                        image.MaxWidth = m_FontSize * ratioToFontSize;
+                        image.MaxHeight = m_FontSize * ratioToFontSize;
+                        image.Margin = new(marginLeft, marginTop, marginRight, marginBottom);
                         InlineUIContainer imageInline = new()
                         {
                             BaselineAlignment = BaselineAlignment.Center,

@@ -1,24 +1,38 @@
 ﻿using CorpseLib.StructuredText;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 using System.Windows.Media;
 
 namespace CorpseLib.Wpf
 {
     public class SectionRun : System.Windows.Documents.Run
     {
-        private readonly Dictionary<string, object?> m_Style = [];
+        private readonly Dictionary<string, object> m_Style = [];
 
         public SectionRun(Section section)
         {
             Text = (section.SectionType == Section.Type.TEXT) ? section.Content : section.Alt;
             m_Style = section.Properties;
 
-            if (m_Style.TryGetValue("FontSize", out object? fontSize))
-                FontSize = (double)fontSize!;
+            if (section.TryGetProperties("FontSize", out double fontSize))
+                FontSize = fontSize;
 
-            if (m_Style.TryGetValue("Color", out object? foreground))
-                Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom((string)foreground!)!;
-            if (m_Style.TryGetValue("BackgroundColor", out object? background))
-                Background = (SolidColorBrush)new BrushConverter().ConvertFrom((string)background!)!;
+            BrushConverter converter = new();
+            if (section.TryGetProperties("Color", out string? foreground))
+            {
+                Brush? foregroundBrush = (Brush?)converter.ConvertFrom(foreground);
+                if (foregroundBrush != null)
+                    Foreground = foregroundBrush;
+            }
+            if (section.TryGetProperties("BackgroundColor", out string? background))
+            {
+                Brush? backgroundBrush = (Brush?)converter.ConvertFrom(background);
+                if (backgroundBrush != null)
+                    Background = backgroundBrush;
+            }
+
+            if (section.TryGetProperties("Bold", out bool bold) && bold)
+                FontWeight = FontWeights.Bold;
         }
 
         public void SetFontSize(double fontSize)
@@ -27,17 +41,26 @@ namespace CorpseLib.Wpf
                 FontSize = fontSize;
         }
 
-        public bool TryGetStyle<T>(string key, out T? style)
+        public bool TryGetStyle<T>(string key, [NotNullWhen(true)] out T? style)
         {
-            if (m_Style.TryGetValue(key, out object? ret))
+            if (m_Style.TryGetValue(key, out object? obj))
             {
-                if (ret != null)
-                    style = Helper.Cast<T>(ret);
+                if (obj is T t)
+                {
+                    style = t;
+                    return true;
+                }
                 else
-                    style = default;
-                return true;
-            }
+                {
 
+                    T? tmp = Helper.Cast<T>(obj);
+                    if (tmp != null)
+                    {
+                        style = tmp;
+                        return true;
+                    }
+                }
+            }
             style = default;
             return false;
         }
