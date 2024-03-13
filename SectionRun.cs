@@ -41,7 +41,7 @@ namespace CorpseLib.Wpf
                 FontSize = fontSize;
         }
 
-        public bool TryGetStyle<T>(string key, [NotNullWhen(true)] out T? style)
+        public bool TryGetStyle<T>(string key, [MaybeNullWhen(false)] out T? style)
         {
             if (m_Style.TryGetValue(key, out object? obj))
             {

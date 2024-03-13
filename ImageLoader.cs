@@ -2,11 +2,9 @@
 using CorpseLib.Placeholder;
 using CorpseLib.Web;
 using CorpseLib.Web.Http;
-using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Image = System.Windows.Controls.Image;
 
 namespace CorpseLib.Wpf
 {
@@ -42,18 +40,18 @@ namespace CorpseLib.Wpf
             return null;
         }
 
-        public static Image? LoadStaticImage(string url)
+        public static System.Windows.Controls.Image? LoadStaticImage(string url)
         {
             if (ms_LoadedStaticImage.TryGetValue(url, out BitmapSource? source))
-                return new Image() { Source = source };
+                return new System.Windows.Controls.Image() { Source = source };
             else
             {
                 System.Drawing.Image? img = LoadImage(url);
                 if (img != null)
                 {
-                    BitmapSource newSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(((Bitmap)img).GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    BitmapSource newSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(((System.Drawing.Bitmap)img).GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                     ms_LoadedStaticImage[url] = newSource;
-                    return new Image() { Source = newSource };
+                    return new System.Windows.Controls.Image() { Source = newSource };
                 }
             }
             return null;
@@ -68,7 +66,7 @@ namespace CorpseLib.Wpf
                 System.Drawing.Image? img = LoadImage(url);
                 if (img != null)
                 {
-                    Bitmap animatedBitmap = (Bitmap)img;
+                    System.Drawing.Bitmap animatedBitmap = (System.Drawing.Bitmap)img;
                     int timeFrames = animatedBitmap.GetFrameCount(System.Drawing.Imaging.FrameDimension.Time);
                     if (timeFrames > 0)
                     {
@@ -76,7 +74,7 @@ namespace CorpseLib.Wpf
                         for (int i = 0; i < timeFrames; ++i)
                         {
                             animatedBitmap.SelectActiveFrame(System.Drawing.Imaging.FrameDimension.Time, i);
-                            Bitmap bitmap = new(animatedBitmap);
+                            System.Drawing.Bitmap bitmap = new(animatedBitmap);
                             bitmap.MakeTransparent();
                             bitmapSources[i] = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                         }
