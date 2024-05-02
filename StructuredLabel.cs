@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using Image = System.Windows.Controls.Image;
 using Section = CorpseLib.StructuredText.Section;
 
 namespace CorpseLib.Wpf
@@ -10,7 +9,7 @@ namespace CorpseLib.Wpf
     public class StructuredLabel : RichTextBox
     {
         private readonly List<SectionRun> m_Text = [];
-        private readonly List<Image> m_Images = [];
+        private readonly List<System.Windows.Controls.Image> m_Images = [];
         private double m_FontSize = 14;
 
         public void SetText(Text text)
@@ -32,7 +31,7 @@ namespace CorpseLib.Wpf
                 }
                 else
                 {
-                    Image? image = null;
+                    System.Windows.Controls.Image? image = null;
                     if (section.SectionType == Section.Type.IMAGE)
                         image = ImageLoader.LoadStaticImage(section.Content);
                     else if (section.SectionType == Section.Type.ANIMATED_IMAGE)
@@ -75,7 +74,7 @@ namespace CorpseLib.Wpf
             m_FontSize = fontSize;
             foreach (SectionRun sectionRun in m_Text)
                 sectionRun.SetFontSize(fontSize);
-            foreach (Image image in m_Images)
+            foreach (System.Windows.Controls.Image image in m_Images)
             {
                 image.Width = fontSize * 1.5;
                 image.Height = fontSize * 1.5;

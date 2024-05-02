@@ -10,7 +10,7 @@ namespace CorpseLib.Wpf
         private readonly BitmapSource[] m_BitmapSources = [];
         private int m_CurrentFrame = 0;
 
-        public AnimatedImage(Image animatedBitmap, BitmapSource[] bitmapSources)
+        public AnimatedImage(System.Drawing.Image animatedBitmap, BitmapSource[] bitmapSources)
         {
             m_BitmapSources = bitmapSources;
             ImageAnimator.Animate(animatedBitmap, OnFrameChanged);

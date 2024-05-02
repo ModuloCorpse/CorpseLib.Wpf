@@ -53,7 +53,7 @@ namespace CorpseLib.Wpf
                 else
                 {
 
-                    T? tmp = Helper.Cast<T>(obj);
+                    T? tmp = CorpseLib.Helper.Cast<T>(obj);
                     if (tmp != null)
                     {
                         style = tmp;
