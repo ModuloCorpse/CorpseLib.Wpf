@@ -23,6 +23,8 @@ namespace CorpseLib.Wpf
                 ms_PlaceholderContext.AddVariable("ExeDir", strWorkPath);
         }
 
+        public static void AddPlaceholderVariable(string name, object value) => ms_PlaceholderContext.AddVariable(name, value);
+
         private static System.Drawing.Image? LoadImage(string imageURL)
         {
             string url = Converter.Convert(imageURL, ms_PlaceholderContext);
@@ -30,7 +32,7 @@ namespace CorpseLib.Wpf
                 return System.Drawing.Image.FromFile(url);
             else
             {
-                Response response = new URLRequest(URI.Parse(url)).Send();
+                Response response = new URLRequest(URI.Parse(url), Request.MethodType.GET).Send();
                 if (response.StatusCode == 200)
                 {
                     MemoryStream stream = new(response.RawBody);
