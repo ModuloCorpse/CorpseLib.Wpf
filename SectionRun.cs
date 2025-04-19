@@ -18,15 +18,23 @@ namespace CorpseLib.Wpf
                 FontSize = fontSize;
 
             BrushConverter converter = new();
-            if (section.TryGetProperties("Color", out string? foreground))
+            if (section.TryGetProperties("Color", out object? foreground))
             {
-                Brush? foregroundBrush = (Brush?)converter.ConvertFrom(foreground);
+                Brush? foregroundBrush = null;
+                if (foreground is string foregroundStr)
+                    foregroundBrush = (Brush?)converter.ConvertFrom(foregroundStr);
+                else if (foreground is Color foregroundColor)
+                    foregroundBrush = new SolidColorBrush(foregroundColor);
                 if (foregroundBrush != null)
                     Foreground = foregroundBrush;
             }
-            if (section.TryGetProperties("BackgroundColor", out string? background))
+            if (section.TryGetProperties("BackgroundColor", out object? background))
             {
-                Brush? backgroundBrush = (Brush?)converter.ConvertFrom(background);
+                Brush? backgroundBrush = null;
+                if (background is string backgroundStr)
+                    backgroundBrush = (Brush?)converter.ConvertFrom(backgroundStr);
+                else if (background is Color backgroundColor)
+                    backgroundBrush = new SolidColorBrush(backgroundColor);
                 if (backgroundBrush != null)
                     Background = backgroundBrush;
             }
