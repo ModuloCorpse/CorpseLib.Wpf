@@ -3,6 +3,7 @@ using CorpseLib.Placeholder;
 using CorpseLib.Web;
 using CorpseLib.Web.Http;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -28,7 +29,38 @@ namespace CorpseLib.Wpf
         private static System.Drawing.Image? LoadImage(string imageURL)
         {
             string url = Converter.Convert(imageURL, ms_PlaceholderContext);
-            if (File.Exists(url))
+            if (url.StartsWith("assembly:"))
+            {
+                url = url[9..];
+                Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                foreach (Assembly assembly in assemblies)
+                {
+                    Stream? internalResourceStream = assembly.GetManifestResourceStream(url);
+                    if (internalResourceStream != null)
+                    {
+                        using MemoryStream stream = new();
+                        internalResourceStream.CopyTo(stream);
+                        return System.Drawing.Image.FromStream(stream);
+                    }
+                }
+            }
+            else if (url.StartsWith("file:"))
+            {
+                url = url[5..];
+                if (File.Exists(url))
+                    return System.Drawing.Image.FromFile(url);
+            }
+            else if (url.StartsWith("url:"))
+            {
+                url = url[4..];
+                Response response = new URLRequest(URI.Parse(url), Request.MethodType.GET).Send();
+                if (response.StatusCode == 200)
+                {
+                    MemoryStream stream = new(response.RawBody);
+                    return System.Drawing.Image.FromStream(stream);
+                }
+            }
+            else if (File.Exists(url))
                 return System.Drawing.Image.FromFile(url);
             else
             {
